@@ -63,3 +63,69 @@ tree   //查看文件结构树
 `：` 在正常模式下，按：进入命令模式
 
 `%！xxd`：显示二进制
+
+# 配置
+
+在目录/etc/vim/下面，会有名为vimrc的文件，这是系统公共的vim配置文件，对**所有的用户**都是有效的。 如果只是希望对本用户有效，也可以在当前用户的家目录(~)下建立.vimrc文件
+
+```shell
+set autoindent           # 自动缩进
+set smartindent          # 为C语言提供自动缩进
+set number               # 显示行号
+set langmenu=zh_CN.UTF-8
+set helplang=cn          # 语言设置
+set tabstop=4            # Tab键的宽度
+set softtabstop=4        # 统一缩进为4
+set foldenable           # 用空格键来开关折叠
+```
+
+```shell
+"进行版权声明的设置
+"添加或更新头
+map <F5> :call TitleComment()<cr>'s
+function AddTitleForC()
+    call append(0,"/*==========================================================")
+    call append(1,"# Author             :Jiaq.yang")
+    call append(2,"# Email              :thinklook1@outlook.com")
+    call append(3,"# Create time        :".strftime("%Y-%m-%d %H:%M"))
+    call append(4,"# Last modified      :".strftime("%Y-%m-%d %H:%M"))
+    call append(5,"# Filename: ".expand("%:t"))
+    call append(6,"# Description: ")
+    call append(7,"==========================================================*/")
+    echohl WarningMsg | echo "Successful in adding the copyright." | echohl None
+endf
+"更新最近修改时间和文件名
+function UpdateTitle()
+    normal m'
+    execute '/# *Last modified:/s@:.*$@\=strftime(":\t%Y-%m-%d %H:%M")@'
+    normal ''
+    normal mk
+    execute '/# *Filename:/s@:.*$@\=":\t\t".expand("%:t")@'
+    execute "noh"
+    normal 'k
+    echohl WarningMsg | echo "Successful in updating the copy right." | echohl None
+endfunction
+"判断前10行代码里面，是否有Last modified这个单词，
+"如果没有的话，代表没有添加过作者信息，需要新添加；
+"如果有的话，那么只需要更新即可
+function TitleComment()
+    let n=1
+    "默认为添加
+    while n < 10
+        let line = getline(n)
+        if line =~ '^\#\s*\S*Last\smodified:\S*.*$'
+            call UpdateTitle()
+            return
+        endif
+        let n = n + 1
+    endwhile  
+    call AddTitleForC()
+endfunction
+```
+
+
+
+[vim配置]:https://www.cnblogs.com/zlhao/archive/2012/02/01/2335081.html
+[vim一键添加注释]:https://www.cnblogs.com/mfryf/p/3643349.html
+[vim个性化设置]: https://blog.51cto.com/thedream/1873060
+

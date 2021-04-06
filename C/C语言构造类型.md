@@ -4,6 +4,15 @@
 
 ### 宏定义
 
+定义代码段：
+
+```c
+#define P(a) { \
+	printf("%d\n", a); \
+}
+// \为链接符
+```
+
 ```c
 /*
 	预处理过程就是将预处理指令转化为实际代码（展开）的过程
@@ -25,6 +34,18 @@ int main(int argc, char const *argv[])
     return 0;
 }
 ```
+
+### 预定义的宏
+
+|          宏           | 说明                            |
+| :-------------------: | :------------------------------ |
+|      `__DATE__`       | 日期：Mmm dd yyyy（编译的日期） |
+|      `__TIME__`       | 时间：hh:mm:ss                  |
+|      `__LINE__`       | 行号                            |
+|      `__FILE__`       | 文件名                          |
+|      `__func__`       | 函数名/**非标准**               |
+|      `__FUNC__`       | 函数名/**非标准**               |
+| `__PRETTY_FUNCTION__` | 更详细的函数信息/**非标准**     |
 
 ### 条件编译
 
@@ -130,7 +151,17 @@ int main(int argc, char *argv[])
 }
 ```
 
+## 工程项目开发
+
 ### 多文件编译
+
+声明只能在头文件`.h`中，定义只能在头文件对应的源文件`.c`中
+
+一般将`.h`头文件放在`include`或者`header`文件夹下，把头文件对应的`.c`源文件放在`src`或者`source`文件夹下，在发布工程的时候，为了防止重新编译源文件和源码泄露，通过将`src`或者`source`文件夹下的`.c`文件生成相应的`.o`文件，并将生成的`.o`文件打包成静态链接库`libxxx.a`（`ar -r libxxx.a xxx.o ...`），之后，在`include`和`src`的同级目录下，新建一个`lib`文件夹，将打包后的静态链接库移入。此时，只通过`include`和`lib`文件就可以进行发布了。
+
+`gcc -I./include -c xxx.c` 增加头文件的引用路径`include`
+
+`gcc xxx.o -L./lib -lxxx ` 程序在链接过程中，链接`lib`目录下的静态库文件`libxxx.a`
 
 `main.c`文件：
 
@@ -195,3 +226,4 @@ void display()
 ```
 
 编译：`gcc main.c source/max.c source/test.c -o output/target`
+

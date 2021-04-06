@@ -269,6 +269,26 @@ int main() {
 }
 ```
 
+## 字符串
+
+| 函数                    | 说明                                                         |
+| :---------------------- | ------------------------------------------------------------ |
+| strlen(str)             | 计算字符串长度，以\0作为结束符                               |
+| strcmp(str1,str2)       | 字符串比较（**返回ASCII码的差值**）                          |
+| strcpy(dest,src)        | 字符串拷贝（**在复制字符串时会自动在末尾加上\0，因此dest的长度必须比src多至少1个字符**） |
+| strncmp(str1,str2,n)    | 安全的字符串比较                                             |
+| strncpy(str1,str2,n)    | 安全的字符串拷贝                                             |
+| strcat(dest,src)        | 将src里面存储的字符串接到dest的后面，返回值为dest            |
+| strtok(str, delimiters) | 将输入的字符串str用输入的分隔符delimiters分为更短的字符串    |
+| memcpy(str1,str2,n)     | 内存拷贝                                                     |
+| memcmp(str1,str2,n)     | 内存比较                                                     |
+| memset(str1,c,n)        | 内存设置（**按照字节赋值**）                                 |
+
+| 函数                       | 说明                 |
+| -------------------------- | -------------------- |
+| sscanf(str1,  format, ...) | 从字符串str1读入内容 |
+| sprintf(str1, format, ...) | 将内容输出到str1中   |
+
 ## 长度未知的大数组
 
 `#include<malloc.h>`
@@ -362,6 +382,20 @@ va一族来实现变参函数
 
 结束整个获取可变参数列表的动作->`va_end`：
 
+**现在操作系统栈的大小为8MB**
+
+## C语言传递二维数组
+
+1. 在参数声明中指定二位数组的列数
+
+   `void func(int a[][5])`
+
+2. 把参数声明为一个指向数组的指针
+
+   `void func(int (*a)[3])`
+
+[C语言函数传递二维数组]:https://www.jianshu.com/p/d7f2afe08f41
+
 ## Makefile
 
 `.PHONY`用于声明一些伪目标，伪目标与普通目标的主要区别是伪目标不会被检查是否存在于文件系统中，而默认不存在且不会应用默认规则生成它。
@@ -402,7 +436,84 @@ gdb ./a.out    # 进入gdb进行调试
 (gdb) info p   # 显示文件的端点信息
 ```
 
+## 指针
 
+按照字节编址，**一个地址对应一个字节**
+
+## typedef
+
+1. 内建类型的重命名
+
+   `typedef long long lint;`
+
+   `typedef char* pchar;`
+
+2. 结构体类型的重命名
+
+   ```c
+   typedef struct __node {
+       int x, y;
+   } Node, *PNode;
+   ```
+   
+3. 函数指针命名
+
+   `typedef int (*func)(int);`
+
+```C
+// 便捷的数组声明方式
+#include <stdio.h>
+
+#define ZLEN 5
+typedef int zip_dig[ZLEN];
+
+int main() {
+    zip_dig cmu = {1, 2, 3, 4, 5};
+    zip_dig mit = {6, 7, 8, 9, 10};
+    zip_dig ucb = {11, 12, 13, 14, 15};
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", ucb[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+```
+
+
+
+## main函数参数
+
+```c
+int main(int argc, char *argv[]);
+// char *argv[]等价于char argv[][]
+int main(int argc, char *argv[], char **env);
+```
+
+## 盲点
+
+函数的返回值类型和实际的返回值类型不同时，会以函数的返回值类型为准
+
+[参考]:https://www.cnblogs.com/xwdreamer/archive/2012/04/12/2444494.html
+
+```c
+int test(void)
+{
+    double a = 2.5;
+    return a;
+}
+// 此时返回的是int类型，结果为2
+```
+
+```c
+// 因为*操作符是左操作符，左操作符的优先级是从右到左
+const char *p    // 定义一个指针指向一个常量，不能通过指针来修改这个指针指向的值
+char* const p    // p是一个常量类型的指针，不能修改这个指针的指向，但是这个指针所指向的地址上存储的值可以修改
+```
+
+函数未声明错误发生在语言的编译期
+
+函数未定义错误发生在语言的链接期
 
 共用体类型中可以含有共用体类型成员
 
